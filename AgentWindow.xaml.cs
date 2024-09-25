@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows;
 using WpfApp1.Data;
 
 namespace WpfApp1
@@ -11,35 +13,111 @@ namespace WpfApp1
         {
             InitializeComponent();
             dbHelper = new DatabaseHelper();
+            LoadApartments();
         }
 
-        // Обработчик события нажатия кнопки для добавления квартиры
+        private void LoadApartments()
+        {
+            var apartments = dbHelper.GetAllApartments();
+
+            // Здесь вы можете добавить код для загрузки адресов для каждой квартиры,
+            // если они не загружаются автоматически
+            foreach (var apartment in apartments)
+            {
+                apartment.Address = dbHelper.GetAddressById(apartment.AddressID);
+            }
+
+            ApartmentsDataGrid.ItemsSource = apartments;
+        }
+
         private void AddApartmentButton_Click(object sender, RoutedEventArgs e)
         {
-            // Пример добавления адреса
-            Address newAddress = new Address
+            try
             {
-                Street = "Example St.",
-                City = "City",
-                PostalCode = "12345"
-            };
-            dbHelper.AddAddress(newAddress);
+                // Считываем данные из текстовых полей
+                Address newAddress = new Address
+                {
+                    Street = StreetTextBox.Text,
+                    City = CityTextBox.Text,
+                    PostalCode = PostalCodeTextBox.Text
+                };
 
-            // Получаем AddressID
-            int addressId = dbHelper.GetAddressId(newAddress.Street, newAddress.City, newAddress.PostalCode);
+                // Добавляем адрес в базу данных
+                dbHelper.AddAddress(newAddress);
 
-            // Пример добавления квартиры
-            Apartment newApartment = new Apartment
+                // Получаем AddressID для добавления квартиры
+                int addressId = dbHelper.GetAddressId(newAddress.Street, newAddress.City, newAddress.PostalCode);
+
+                // Создаем новую квартиру с введенными данными
+                Apartment newApartment = new Apartment
+                {
+                    AddressID = addressId,
+                    Area = decimal.Parse(AreaTextBox.Text),
+                    Rooms = int.Parse(RoomsTextBox.Text),
+                    Price = decimal.Parse(PriceTextBox.Text),
+                    Description = DescriptionTextBox.Text
+                };
+
+                // Добавляем квартиру в базу данных
+                dbHelper.AddApartment(newApartment);
+
+                MessageBox.Show("Квартира успешно добавлена!");
+                LoadApartments(); // Обновляем список квартир
+            }
+            catch (FormatException)
             {
-                AddressID = addressId,
-                Area = 100,
-                Rooms = 3,
-                Price = 500000,
-                Description = "Nice apartment"
-            };
-            dbHelper.AddApartment(newApartment);
+                MessageBox.Show("Ошибка ввода данных. Проверьте, что площадь, количество комнат и цена введены корректно.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Произошла ошибка: " + ex.Message);
+            }
+        }
 
-            MessageBox.Show("Квартира успешно добавлена!");
+        private void EditApartmentButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ApartmentsDataGrid.SelectedItem is Apartment selectedApartment)
+            {
+                // Открываем окно редактирования с выбранной квартирой
+                var editWindow = new EditApartmentWindow(selectedApartment);
+                if (editWindow.ShowDialog() == true)
+                {
+                    LoadApartments(); // Обновляем список квартир
+                }
+            }
+            else
+            {
+                MessageBox.Show("Пожалуйста, выберите квартиру для редактирования.");
+            }
+        }
+
+        private void DeleteApartmentButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ApartmentsDataGrid.SelectedItem is Apartment selectedApartment)
+            {
+                dbHelper.DeleteApartment(selectedApartment.ApartmentID);
+                MessageBox.Show("Квартира успешно удалена!");
+                LoadApartments(); // Обновляем список квартир
+            }
+            else
+            {
+                MessageBox.Show("Пожалуйста, выберите квартиру для удаления.");
+            }
+        }
+
+        private void ApartmentsDataGrid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (ApartmentsDataGrid.SelectedItem is Apartment selectedApartment)
+            {
+                // Заполняем текстовые поля данными выбранной квартиры
+                StreetTextBox.Text = selectedApartment.Address.Street;
+                CityTextBox.Text = selectedApartment.Address.City;
+                PostalCodeTextBox.Text = selectedApartment.Address.PostalCode;
+                AreaTextBox.Text = selectedApartment.Area.ToString();
+                RoomsTextBox.Text = selectedApartment.Rooms.ToString();
+                PriceTextBox.Text = selectedApartment.Price.ToString();
+                DescriptionTextBox.Text = selectedApartment.Description;
+            }
         }
     }
 }

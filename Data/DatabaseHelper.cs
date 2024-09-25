@@ -14,7 +14,59 @@ namespace WpfApp1.Data
             connectionString = ConfigurationManager.ConnectionStrings["MaclerDB"].ConnectionString;
         }
 
-        // Метод для добавления адреса
+        public void DeleteApartment(int apartmentId)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                var command = new SqlCommand("DELETE FROM Apartments WHERE ApartmentID = @ApartmentID", connection);
+                command.Parameters.AddWithValue("@ApartmentID", apartmentId);
+                command.ExecuteNonQuery();
+            }
+        }
+
+        public void UpdateApartment(Apartment apartment)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                var command = new SqlCommand("UPDATE Apartments SET Area = @Area, Rooms = @Rooms, Price = @Price, Description = @Description WHERE ApartmentID = @ApartmentID", connection);
+                command.Parameters.AddWithValue("@Area", apartment.Area);
+                command.Parameters.AddWithValue("@Rooms", apartment.Rooms);
+                command.Parameters.AddWithValue("@Price", apartment.Price);
+                command.Parameters.AddWithValue("@Description", apartment.Description);
+                command.Parameters.AddWithValue("@ApartmentID", apartment.ApartmentID);
+                command.ExecuteNonQuery();
+            }
+        }
+
+        public List<Apartment> GetAllApartments()
+        {
+            var apartments = new List<Apartment>();
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                var command = new SqlCommand("SELECT * FROM Apartments", connection);
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var apartment = new Apartment
+                        {
+                            ApartmentID = reader.GetInt32(0),
+                            AddressID = reader.GetInt32(1),
+                            Area = reader.GetDecimal(2),
+                            Rooms = reader.GetInt32(3),
+                            Price = reader.GetDecimal(4),
+                            Description = reader.GetString(5)
+                        };
+                        apartments.Add(apartment);
+                    }
+                }
+            }
+            return apartments;
+        }
+
         public void AddAddress(Address address)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -29,7 +81,6 @@ namespace WpfApp1.Data
             }
         }
 
-        // Метод для получения AddressID
         public int GetAddressId(string street, string city, string postalCode)
         {
             int addressId = 0;
@@ -51,7 +102,6 @@ namespace WpfApp1.Data
             return addressId;
         }
 
-        // Метод для добавления квартиры
         public void AddApartment(Apartment apartment)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -68,32 +118,30 @@ namespace WpfApp1.Data
             }
         }
 
-        // Метод для получения списка квартир
-        public List<Apartment> GetApartments()
+        public Address GetAddressById(int addressId)
         {
-            List<Apartment> apartments = new List<Apartment>();
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            Address address = null;
+            using (var connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                string query = "SELECT * FROM Apartments";
-                SqlCommand command = new SqlCommand(query, connection);
-                SqlDataReader reader = command.ExecuteReader();
+                var command = new SqlCommand("SELECT * FROM Addresses WHERE AddressID = @AddressID", connection);
+                command.Parameters.AddWithValue("@AddressID", addressId);
 
-                while (reader.Read())
+                using (var reader = command.ExecuteReader())
                 {
-                    Apartment apartment = new Apartment
+                    if (reader.Read())
                     {
-                        ApartmentID = (int)reader["ApartmentID"],
-                        Area = (decimal)reader["Area"],
-                        Rooms = (int)reader["Rooms"],
-                        Price = (decimal)reader["Price"],
-                        Description = (string)reader["Description"],
-                        AddressID = (int)reader["AddressID"]
-                    };
-                    apartments.Add(apartment);
+                        address = new Address
+                        {
+                            AddressID = reader.GetInt32(0),
+                            Street = reader.GetString(1),
+                            City = reader.GetString(2),
+                            PostalCode = reader.GetString(3)
+                        };
+                    }
                 }
             }
-            return apartments;
+            return address;
         }
     }
 }

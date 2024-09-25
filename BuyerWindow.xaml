@@ -4,6 +4,6 @@
         Title="Buyer Panel" Height="400" Width="600">
     <Grid>
         <ListBox Name="lstAvailableApartments" />
-        <Button Content="Купить квартиру" Click="BuyApartment_Click" />
+        <Button Content="Купити квартиру" Click="BuyApartment_Click" />
     </Grid>
 </Window>

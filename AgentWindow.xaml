@@ -1,31 +1,42 @@
 ﻿<Window x:Class="WpfApp1.AgentWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Agent Window" Height="484" Width="800">
+        Title="Agent Window" Height="1000" Width="600">
     <Grid>
-        <StackPanel Margin="20">
-            <Label Content="Улица:"/>
-            <TextBox Name="StreetTextBox" Width="200"/>
+        <Label Content="Street:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,6,0,0" />
+        <TextBox x:Name="StreetTextBox" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="60,10,0,0" Width="335"/>
 
-            <Label Content="Город:"/>
-            <TextBox Name="CityTextBox" Width="200"/>
+        <Label Content="City:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,36,0,0" />
+        <TextBox x:Name="CityTextBox" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="60,40,0,0" Width="335"/>
 
-            <Label Content="Почтовый индекс:"/>
-            <TextBox Name="PostalCodeTextBox" Width="200"/>
+        <Label Content="Postal Code:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,70,0,0" />
+        <TextBox x:Name="PostalCodeTextBox" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="100,74,0,0" Width="295"/>
 
-            <Label Content="Площадь (кв. м):"/>
-            <TextBox Name="AreaTextBox" Width="200"/>
+        <Label Content="Area:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,100,0,0" />
+        <TextBox x:Name="AreaTextBox" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="60,104,0,0" Width="335"/>
 
-            <Label Content="Количество комнат:"/>
-            <TextBox Name="RoomsTextBox" Width="200"/>
+        <Label Content="Rooms:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,130,0,0" />
+        <TextBox x:Name="RoomsTextBox" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="60,134,0,0" Width="335"/>
 
-            <Label Content="Цена:"/>
-            <TextBox Name="PriceTextBox" Width="200"/>
+        <Label Content="Price:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,160,0,0" />
+        <TextBox x:Name="PriceTextBox" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="60,164,0,0" Width="335"/>
 
-            <Label Content="Описание:"/>
-            <TextBox Name="DescriptionTextBox" Width="200" Height="100" TextWrapping="Wrap" AcceptsReturn="True"/>
+        <Label Content="Description:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,190,0,0" />
+        <TextBox x:Name="DescriptionTextBox" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="100,190,0,0" Height="50" Width="295"/>
 
-            <Button Name="AddApartmentButton" Content="Добавить Квартиру" Click="AddApartmentButton_Click" Width="200"/>
-        </StackPanel>
+        <Button Content="Add Apartment" Click="AddApartmentButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="60,250,0,0"/>
+
+        <DataGrid x:Name="ApartmentsDataGrid" AutoGenerateColumns="False" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,300,0,0" Height="489" Width="580" SelectionChanged="ApartmentsDataGrid_SelectionChanged">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Street" Binding="{Binding Address.Street}" />
+                <DataGridTextColumn Header="Area" Binding="{Binding Area}" />
+                <DataGridTextColumn Header="Rooms" Binding="{Binding Rooms}" />
+                <DataGridTextColumn Header="Price" Binding="{Binding Price}" />
+                <DataGridTextColumn Header="Description" Binding="{Binding Description}" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Button Content="Edit Apartment" Click="EditApartmentButton_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,339,114"/>
+        <Button Content="Delete Apartment" Click="DeleteApartmentButton_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,212,114"/>
     </Grid>
 </Window>
