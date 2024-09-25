@@ -1,0 +1,9 @@
+﻿<Window x:Class="WpfApp1.BuyerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Buyer Panel" Height="400" Width="600">
+    <Grid>
+        <ListBox Name="lstAvailableApartments" />
+        <Button Content="Купить квартиру" Click="BuyApartment_Click" />
+    </Grid>
+</Window>
