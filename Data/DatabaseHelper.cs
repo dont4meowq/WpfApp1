@@ -16,14 +16,26 @@ namespace WpfApp1.Data
 
         public void DeleteApartment(int apartmentId)
         {
-            using (var connection = new SqlConnection(connectionString))
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                var command = new SqlCommand("DELETE FROM Apartments WHERE ApartmentID = @ApartmentID", connection);
-                command.Parameters.AddWithValue("@ApartmentID", apartmentId);
-                command.ExecuteNonQuery();
+
+                string deleteStatusQuery = "DELETE FROM ApartmentStatus WHERE ApartmentID = @ApartmentID";
+                using (SqlCommand command = new SqlCommand(deleteStatusQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@ApartmentID", apartmentId);
+                    command.ExecuteNonQuery();
+                }
+
+                string deleteApartmentQuery = "DELETE FROM Apartments WHERE ApartmentID = @ApartmentID";
+                using (SqlCommand command = new SqlCommand(deleteApartmentQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@ApartmentID", apartmentId);
+                    command.ExecuteNonQuery();
+                }
             }
         }
+
 
         public void UpdateApartment(Apartment apartment)
         {
@@ -112,16 +124,29 @@ namespace WpfApp1.Data
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                string query = "INSERT INTO Apartments (AddressID, Area, Rooms, Price, Description) VALUES (@AddressID, @Area, @Rooms, @Price, @Description)";
+
+                // Сначала добавляем квартиру в таблицу Apartments
+                string query = "INSERT INTO Apartments (AddressID, Area, Rooms, Price, Description) VALUES (@AddressID, @Area, @Rooms, @Price, @Description); SELECT SCOPE_IDENTITY();";
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@AddressID", apartment.AddressID);
                 command.Parameters.AddWithValue("@Area", apartment.Area);
                 command.Parameters.AddWithValue("@Rooms", apartment.Rooms);
                 command.Parameters.AddWithValue("@Price", apartment.Price);
                 command.Parameters.AddWithValue("@Description", apartment.Description);
-                command.ExecuteNonQuery();
+
+                // Выполняем запрос и получаем ID добавленной квартиры
+                int newApartmentId = Convert.ToInt32(command.ExecuteScalar());
+
+                // Теперь добавляем запись о статусе для новой квартиры
+                string statusQuery = "INSERT INTO ApartmentStatus (ApartmentID, Status) VALUES (@ApartmentID, 'Available')";
+                using (SqlCommand statusCommand = new SqlCommand(statusQuery, connection))
+                {
+                    statusCommand.Parameters.AddWithValue("@ApartmentID", newApartmentId);
+                    statusCommand.ExecuteNonQuery();
+                }
             }
         }
+
 
         public List<Apartment> GetAvailableApartments()
         {
@@ -176,6 +201,21 @@ namespace WpfApp1.Data
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
+                    command.Parameters.AddWithValue("@ApartmentID", apartmentId);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void UpdateApartmentStatus(int apartmentId, string status)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "UPDATE ApartmentStatus SET Status = @Status WHERE ApartmentID = @ApartmentID";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Status", status);
                     command.Parameters.AddWithValue("@ApartmentID", apartmentId);
                     command.ExecuteNonQuery();
                 }

@@ -18,6 +18,21 @@ namespace WpfApp1
             dbHelper = new DatabaseHelper();
             LoadApartments();
         }
+        private void ChangeStatusButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ApartmentsDataGrid.SelectedItem is Apartment selectedApartment)
+            {
+                string selectedStatus = ((ComboBoxItem)StatusComboBox.SelectedItem).Content.ToString();
+                DatabaseHelper dbHelper = new DatabaseHelper();
+                dbHelper.UpdateApartmentStatus(selectedApartment.ApartmentID, selectedStatus);
+                MessageBox.Show("Статус квартиры изменен на: " + selectedStatus);
+                LoadApartments(); // Метод для обновления списка квартир
+            }
+            else
+            {
+                MessageBox.Show("Пожалуйста, выберите квартиру.");
+            }
+        }
 
         private void LoadApartments()
         {
