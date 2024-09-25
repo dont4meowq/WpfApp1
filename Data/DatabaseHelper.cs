@@ -72,7 +72,6 @@ namespace WpfApp1.Data
             return apartments;
         }
 
-
         public void AddAddress(Address address)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -121,6 +120,65 @@ namespace WpfApp1.Data
                 command.Parameters.AddWithValue("@Price", apartment.Price);
                 command.Parameters.AddWithValue("@Description", apartment.Description);
                 command.ExecuteNonQuery();
+            }
+        }
+
+        public List<Apartment> GetAvailableApartments()
+        {
+            List<Apartment> apartments = new List<Apartment>();
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = @"
+                SELECT a.ApartmentID, a.Area, a.Rooms, a.Price, a.Description,
+                       ad.Street, ad.City, ad.PostalCode 
+                FROM Apartments a 
+                JOIN ApartmentStatus s ON a.ApartmentID = s.ApartmentID 
+                JOIN Addresses ad ON a.AddressID = ad.AddressID
+                WHERE s.Status = 'Available'";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Apartment apartment = new Apartment
+                        {
+                            ApartmentID = (int)reader["ApartmentID"],
+                            Area = (decimal)reader["Area"],
+                            Rooms = (int)reader["Rooms"],
+                            Price = (decimal)reader["Price"],
+                            Description = reader["Description"].ToString(),
+                            Address = new Address
+                            {
+                                Street = reader["Street"].ToString(),
+                                City = reader["City"].ToString(),
+                                PostalCode = reader["PostalCode"].ToString()
+                            }
+                        };
+                        apartments.Add(apartment);
+                    }
+                }
+            }
+
+            return apartments;
+        }
+
+        public void MarkApartmentAsSold(int apartmentId)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                // Обновляем статус квартиры в базе данных
+                string query = "UPDATE ApartmentStatus SET Status = 'Sold' WHERE ApartmentID = @ApartmentID";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@ApartmentID", apartmentId);
+                    command.ExecuteNonQuery();
+                }
             }
         }
 
