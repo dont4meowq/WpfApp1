@@ -17,7 +17,7 @@ namespace WpfApp1
         private void LoadAvailableApartments()
         {
             var apartments = dbHelper.GetAvailableApartments();
-            AvailableApartmentsDataGrid.ItemsSource = apartments; // используем имя AvailableApartmentsDataGrid
+            AvailableApartmentsDataGrid.ItemsSource = apartments; 
         }
 
         private void BuyApartment_Click(object sender, RoutedEventArgs e)
@@ -27,18 +27,16 @@ namespace WpfApp1
             {
                 dbHelper.MarkApartmentAsSold(selectedApartment.ApartmentID);
                 MessageBox.Show("Квартира куплена!");
-                LoadAvailableApartments(); // обновляем список после покупки
+                LoadAvailableApartments(); 
             }
             else
             {
-                MessageBox.Show("Пожалуйста, выберите квартиру для покупки.");
+                MessageBox.Show("Будь ласка, виберіть квартиру для купівлі.");
             }
         }
 
-        // Если необходимо, вы можете добавить метод для обработки изменения выбора
         private void AvailableApartmentsDataGrid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            // Действия при изменении выбора (если нужно)
         }
     }
 }

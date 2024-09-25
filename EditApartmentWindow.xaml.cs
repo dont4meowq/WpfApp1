@@ -23,24 +23,22 @@ namespace WpfApp1
         }
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Close(); // Закрывает окно без сохранения изменений
+            this.Close(); 
         }
 
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            // Обновляем данные квартиры
             apartment.Area = decimal.Parse(AreaTextBox.Text);
             apartment.Rooms = int.Parse(RoomsTextBox.Text);
             apartment.Price = decimal.Parse(PriceTextBox.Text);
             apartment.Description = DescriptionTextBox.Text;
 
-            // Сохраняем изменения в базе данных
             DatabaseHelper dbHelper = new DatabaseHelper();
             dbHelper.UpdateApartment(apartment);
 
-            MessageBox.Show("Квартира успішно додана!");
-            DialogResult = true; // Закрываем окно с результатом
+            MessageBox.Show("Квартира успішно змінена!");
+            DialogResult = true; 
             Close();
         }
     }

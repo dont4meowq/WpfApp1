@@ -125,7 +125,6 @@ namespace WpfApp1.Data
             {
                 connection.Open();
 
-                // Сначала добавляем квартиру в таблицу Apartments
                 string query = "INSERT INTO Apartments (AddressID, Area, Rooms, Price, Description) VALUES (@AddressID, @Area, @Rooms, @Price, @Description); SELECT SCOPE_IDENTITY();";
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@AddressID", apartment.AddressID);
@@ -134,10 +133,8 @@ namespace WpfApp1.Data
                 command.Parameters.AddWithValue("@Price", apartment.Price);
                 command.Parameters.AddWithValue("@Description", apartment.Description);
 
-                // Выполняем запрос и получаем ID добавленной квартиры
                 int newApartmentId = Convert.ToInt32(command.ExecuteScalar());
 
-                // Теперь добавляем запись о статусе для новой квартиры
                 string statusQuery = "INSERT INTO ApartmentStatus (ApartmentID, Status) VALUES (@ApartmentID, 'Available')";
                 using (SqlCommand statusCommand = new SqlCommand(statusQuery, connection))
                 {
@@ -196,7 +193,6 @@ namespace WpfApp1.Data
             {
                 connection.Open();
 
-                // Обновляем статус квартиры в базе данных
                 string query = "UPDATE ApartmentStatus SET Status = 'Sold' WHERE ApartmentID = @ApartmentID";
 
                 using (SqlCommand command = new SqlCommand(query, connection))

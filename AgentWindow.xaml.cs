@@ -25,12 +25,12 @@ namespace WpfApp1
                 string selectedStatus = ((ComboBoxItem)StatusComboBox.SelectedItem).Content.ToString();
                 DatabaseHelper dbHelper = new DatabaseHelper();
                 dbHelper.UpdateApartmentStatus(selectedApartment.ApartmentID, selectedStatus);
-                MessageBox.Show("Статус квартиры изменен на: " + selectedStatus);
-                LoadApartments(); // Метод для обновления списка квартир
+                MessageBox.Show("Статус квартири змінився на: " + selectedStatus);
+                LoadApartments(); 
             }
             else
             {
-                MessageBox.Show("Пожалуйста, выберите квартиру.");
+                MessageBox.Show("Будь ласка, виберіть квартиру.");
             }
         }
 

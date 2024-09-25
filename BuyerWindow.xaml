@@ -14,21 +14,21 @@
         <Border Background="White" CornerRadius="15" Margin="10,10,10,10" Padding="20">
             <StackPanel>
                 <!-- Список доступных квартир -->
-                <Label Content="Доступные квартиры:" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                <Label Content="Доступні квартири:" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
                 <DataGrid x:Name="AvailableApartmentsDataGrid" AutoGenerateColumns="False" 
                           Height="334" Margin="0" 
                           SelectionChanged="AvailableApartmentsDataGrid_SelectionChanged">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Улица" Binding="{Binding Address.Street}" Width="*"/>
-                        <DataGridTextColumn Header="Площадь" Binding="{Binding Area}" Width="*"/>
+                        <DataGridTextColumn Header="Вулиця" Binding="{Binding Address.Street}" Width="*"/>
+                        <DataGridTextColumn Header="Площа" Binding="{Binding Area}" Width="*"/>
                         <DataGridTextColumn Header="Кімнати" Binding="{Binding Rooms}" Width="*"/>
-                        <DataGridTextColumn Header="Цена" Binding="{Binding Price}" Width="*"/>
-                        <DataGridTextColumn Header="Описание" Binding="{Binding Description}" Width="*"/>
+                        <DataGridTextColumn Header="Ціна" Binding="{Binding Price}" Width="*"/>
+                        <DataGridTextColumn Header="Опис" Binding="{Binding Description}" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
 
                 <!-- Кнопка покупки -->
-                <Button Content="Купить квартиру" Click="BuyApartment_Click" 
+                <Button Content="Купити квартиру" Click="BuyApartment_Click" 
                         Margin="20" FontSize="16" 
                         Background="#009688" Foreground="White" 
                         BorderBrush="Transparent" BorderThickness="1" 
