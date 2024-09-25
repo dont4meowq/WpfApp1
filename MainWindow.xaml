@@ -4,6 +4,6 @@
         Title="Agency" Height="300" Width="400">
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
         <Button Content="Я агент" Click="AgentButton_Click" Margin="10" />
-        <Button Content="Я покупатель" Click="BuyerButton_Click" Margin="10" />
+        <Button Content="Я покупець" Click="BuyerButton_Click" Margin="10" />
     </StackPanel>
 </Window>

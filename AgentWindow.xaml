@@ -1,8 +1,8 @@
 ﻿<Window x:Class="WpfApp1.AgentWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Agent Window" Height="543" Width="722">
-    <Grid Margin="10">
+        Title="Agent Window" Height="543" Width="770">
+    <Grid Margin="10,10,47,10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="50*"/>
             <ColumnDefinition Width="50*"/>
@@ -34,9 +34,20 @@
             <Button Content="Додати квартиру" Click="AddApartmentButton_Click" Width="300" Margin="0,10,0,0"/>
         </StackPanel>
 
-        <!-- Правая колонка с таблицей и кнопками -->
-        <StackPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10">
-            <DataGrid x:Name="ApartmentsDataGrid" AutoGenerateColumns="False" Width="336" Height="350" 
+        <StackPanel VerticalAlignment="Top" Margin="335,10,-51,0" Grid.ColumnSpan="2">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                <Label Content="Сортувати за:" VerticalAlignment="Center"/>
+                <ComboBox x:Name="SortByComboBox" Width="150" SelectionChanged="SortByComboBox_SelectionChanged" Margin="10,0">
+                    <ComboBoxItem Content="ApartmentID" />
+                    <ComboBoxItem Content="Area" />
+                    <ComboBoxItem Content="Rooms" />
+                    <ComboBoxItem Content="Price" />
+                </ComboBox>
+                <Button Content="▲" Click="SortAscending_Click" Width="50" Margin="5"/>
+                <Button Content="▼" Click="SortDescending_Click" Width="50" Margin="5"/>
+            </StackPanel>
+
+            <DataGrid x:Name="ApartmentsDataGrid" AutoGenerateColumns="False" Width="392" Height="350" 
                       SelectionChanged="ApartmentsDataGrid_SelectionChanged">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Street" Binding="{Binding Address.Street}" />

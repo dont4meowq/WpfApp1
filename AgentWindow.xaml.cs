@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using WpfApp1.Data;
 
 namespace WpfApp1
@@ -8,6 +10,7 @@ namespace WpfApp1
     public partial class AgentWindow : Window
     {
         private DatabaseHelper dbHelper;
+        private List<Apartment> apartments;
 
         public AgentWindow()
         {
@@ -18,15 +21,11 @@ namespace WpfApp1
 
         private void LoadApartments()
         {
-            var apartments = dbHelper.GetAllApartments();
-
-            // Здесь вы можете добавить код для загрузки адресов для каждой квартиры,
-            // если они не загружаются автоматически
+            apartments = dbHelper.GetAllApartments();
             foreach (var apartment in apartments)
             {
                 apartment.Address = dbHelper.GetAddressById(apartment.AddressID);
             }
-
             ApartmentsDataGrid.ItemsSource = apartments;
         }
 
@@ -34,7 +33,6 @@ namespace WpfApp1
         {
             try
             {
-                // Считываем данные из текстовых полей
                 Address newAddress = new Address
                 {
                     Street = StreetTextBox.Text,
@@ -42,13 +40,9 @@ namespace WpfApp1
                     PostalCode = PostalCodeTextBox.Text
                 };
 
-                // Добавляем адрес в базу данных
                 dbHelper.AddAddress(newAddress);
-
-                // Получаем AddressID для добавления квартиры
                 int addressId = dbHelper.GetAddressId(newAddress.Street, newAddress.City, newAddress.PostalCode);
 
-                // Создаем новую квартиру с введенными данными
                 Apartment newApartment = new Apartment
                 {
                     AddressID = addressId,
@@ -58,19 +52,17 @@ namespace WpfApp1
                     Description = DescriptionTextBox.Text
                 };
 
-                // Добавляем квартиру в базу данных
                 dbHelper.AddApartment(newApartment);
-
-                MessageBox.Show("Квартира успешно добавлена!");
-                LoadApartments(); // Обновляем список квартир
+                MessageBox.Show("Квартира успішно додана!");
+                LoadApartments();
             }
             catch (FormatException)
             {
-                MessageBox.Show("Ошибка ввода данных. Проверьте, что площадь, количество комнат и цена введены корректно.");
+                MessageBox.Show("Помилка при вводі даних. Перевірте, що площа, кількість кімнат і ціна введені коректно.");
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Произошла ошибка: " + ex.Message);
+                MessageBox.Show("Відбулася помилка: " + ex.Message);
             }
         }
 
@@ -78,16 +70,15 @@ namespace WpfApp1
         {
             if (ApartmentsDataGrid.SelectedItem is Apartment selectedApartment)
             {
-                // Открываем окно редактирования с выбранной квартирой
                 var editWindow = new EditApartmentWindow(selectedApartment);
                 if (editWindow.ShowDialog() == true)
                 {
-                    LoadApartments(); // Обновляем список квартир
+                    LoadApartments();
                 }
             }
             else
             {
-                MessageBox.Show("Пожалуйста, выберите квартиру для редактирования.");
+                MessageBox.Show("Будь ласка, виберіть квартиру для редагування.");
             }
         }
 
@@ -96,12 +87,12 @@ namespace WpfApp1
             if (ApartmentsDataGrid.SelectedItem is Apartment selectedApartment)
             {
                 dbHelper.DeleteApartment(selectedApartment.ApartmentID);
-                MessageBox.Show("Квартира успешно удалена!");
-                LoadApartments(); // Обновляем список квартир
+                MessageBox.Show("Квартира успішно видалена!");
+                LoadApartments();
             }
             else
             {
-                MessageBox.Show("Пожалуйста, выберите квартиру для удаления.");
+                MessageBox.Show("Будь ласка, виберіть квартиру для видалення.");
             }
         }
 
@@ -109,7 +100,6 @@ namespace WpfApp1
         {
             if (ApartmentsDataGrid.SelectedItem is Apartment selectedApartment)
             {
-                // Заполняем текстовые поля данными выбранной квартиры
                 StreetTextBox.Text = selectedApartment.Address.Street;
                 CityTextBox.Text = selectedApartment.Address.City;
                 PostalCodeTextBox.Text = selectedApartment.Address.PostalCode;
@@ -117,6 +107,58 @@ namespace WpfApp1
                 RoomsTextBox.Text = selectedApartment.Rooms.ToString();
                 PriceTextBox.Text = selectedApartment.Price.ToString();
                 DescriptionTextBox.Text = selectedApartment.Description;
+            }
+        }
+
+        private void SortByComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+        }
+
+        private void SortAscending_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedSortOption = (SortByComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+            if (selectedSortOption != null)
+            {
+                switch (selectedSortOption)
+                {
+                    case "ApartmentID":
+                        apartments = apartments.OrderBy(a => a.ApartmentID).ToList();
+                        break;
+                    case "Area":
+                        apartments = apartments.OrderBy(a => a.Area).ToList();
+                        break;
+                    case "Rooms":
+                        apartments = apartments.OrderBy(a => a.Rooms).ToList();
+                        break;
+                    case "Price":
+                        apartments = apartments.OrderBy(a => a.Price).ToList();
+                        break;
+                }
+                ApartmentsDataGrid.ItemsSource = apartments;
+            }
+        }
+
+        private void SortDescending_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedSortOption = (SortByComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+            if (selectedSortOption != null)
+            {
+                switch (selectedSortOption)
+                {
+                    case "ApartmentID":
+                        apartments = apartments.OrderByDescending(a => a.ApartmentID).ToList();
+                        break;
+                    case "Area":
+                        apartments = apartments.OrderByDescending(a => a.Area).ToList();
+                        break;
+                    case "Rooms":
+                        apartments = apartments.OrderByDescending(a => a.Rooms).ToList();
+                        break;
+                    case "Price":
+                        apartments = apartments.OrderByDescending(a => a.Price).ToList();
+                        break;
+                }
+                ApartmentsDataGrid.ItemsSource = apartments;
             }
         }
     }

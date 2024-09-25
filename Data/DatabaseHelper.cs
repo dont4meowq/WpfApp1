@@ -40,13 +40,18 @@ namespace WpfApp1.Data
             }
         }
 
-        public List<Apartment> GetAllApartments()
+        public List<Apartment> GetAllApartments(string sortBy = "ApartmentID", bool ascending = true)
         {
             var apartments = new List<Apartment>();
             using (var connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                var command = new SqlCommand("SELECT * FROM Apartments", connection);
+
+                string sortOrder = ascending ? "ASC" : "DESC";
+
+                var query = $"SELECT * FROM Apartments ORDER BY {sortBy} {sortOrder}";
+
+                var command = new SqlCommand(query, connection);
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
@@ -66,6 +71,7 @@ namespace WpfApp1.Data
             }
             return apartments;
         }
+
 
         public void AddAddress(Address address)
         {

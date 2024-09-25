@@ -21,6 +21,11 @@ namespace WpfApp1
             PriceTextBox.Text = apartment.Price.ToString();
             DescriptionTextBox.Text = apartment.Description;
         }
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close(); // Закрывает окно без сохранения изменений
+        }
+
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
@@ -34,7 +39,7 @@ namespace WpfApp1
             DatabaseHelper dbHelper = new DatabaseHelper();
             dbHelper.UpdateApartment(apartment);
 
-            MessageBox.Show("Квартира успешно обновлена!");
+            MessageBox.Show("Квартира успішно додана!");
             DialogResult = true; // Закрываем окно с результатом
             Close();
         }
